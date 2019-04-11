@@ -1,4 +1,3 @@
-'docker run --name jpa_mysql -e MYSQL_ROOT_PASSWORD=123abc -e MYSQL_DATABASE=jpa_db01 -p 3306:3306 -d mysql'
 use jpa_db01;
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
