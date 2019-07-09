@@ -16,6 +16,7 @@ function connect() {
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
 
+    // đăng kí lên StompEndpoint
     stompClient.connect({}, onConnected, onError);
 }
 
@@ -23,10 +24,14 @@ function connect() {
 connect();
 
 function onConnected() {
-    // Subscribe to the Public Topic
+    console.log("Xử lý sau khi connecte đc với Socket Endpoint");
+    // Subscribe to the Public Topic, đăng ký nhận message của chủ để topic/chatRoom
+    // với onMessageReceived sẽ xử lý nhận message từ topic/chatRoom khi có 1 message đc gửi về
     stompClient.subscribe('/topic/publicChatRoom', onMessageReceived);
 
     // Tell your username to the server
+    console.log("Gửi: " + JSON.stringify({sender: username, type: 'JOIN'}));
+    // sau khi đăng kí xong topic, đăng ký thông tin user
     stompClient.send("/app/chat.addUser",
         {},
         JSON.stringify({sender: username, type: 'JOIN'})
@@ -50,6 +55,8 @@ function sendMessage(event) {
             content: messageInput.value,
             type: 'CHAT'
         };
+        console.log("Gửi: " + JSON.stringify(chatMessage));
+        // gửi message
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
@@ -58,6 +65,7 @@ function sendMessage(event) {
 
 
 function onMessageReceived(payload) {
+    console.log("Nhận: ", payload.body);
     var message = JSON.parse(payload.body);
 
     var messageElement = document.createElement('li');
